@@ -1,0 +1,218 @@
+function json2csv(input) {
+    var CSV = '';
+    var array = typeof input != 'object' ? JSON.parse(input) : input;
+    var isArray = array.length ? true : false;
+    if (isArray) {
+        for (var index in array[0]) {
+            CSV += index + ',';
+        }
+    } else {
+        for (var index in array) {
+            CSV += index + ',';
+        }
+    }
+    CSV = CSV.slice(0, -1);
+    CSV += '\r\n';
+
+    if (isArray) {
+        for (var i = 0; i < array.length; i++) {
+            var row = "";
+            for (var index in array[i]) {
+                var val = array[i][index];
+                if (typeof val == "object")
+                    val = "object";
+                row += val + ',';
+            }
+            row = row.slice(0, -1);
+            CSV += row + '\r\n';
+        }
+    } else {
+        var row = "";
+        for (var index in array) {
+            var val = array[index];
+            if (typeof val == "object")
+                val = "object";
+            row += val + ',';
+        }
+        row = row.slice(0, -1);
+        CSV += row + '\r\n';
+    }
+
+    return CSV;
+}
+
+function copyTextToClipboard(text) {
+    var copyFrom = $('<textarea/>');
+    copyFrom.text(text);
+    $('body').append(copyFrom);
+    copyFrom.select();
+    document.execCommand('copy');
+    copyFrom.remove();
+}
+
+$( document ).ready(function() {
+    console.log("It's formatting time.");
+    var valid = false;
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/json");
+    editor.$blockScrolling = Infinity;
+    window.editor = editor;
+    if (window.json) {
+        var val = json;
+        var o = JSON.parse(val);
+        val = JSON.stringify(o, null, 4);
+        if (val) {
+            editor.session.setValue(val);
+            valid = true;
+            updateValid();
+        }
+    }
+
+    function updateValid() {
+        if (valid) {
+            $('#valid').text("VALID");
+        } else {
+            $('#valid').text("INVALID");
+        }
+    }
+    function getJSONSelector() {
+        var selectorParts = [];
+        var lineNumber = editor.getSelectionRange().start.row;
+        var lineString = editor.session.getLine(lineNumber);
+        var clean = lineString.slice(lineString.indexOf("\"")+1);
+        clean = clean.slice(0, clean.indexOf("\""));
+        selectorParts.push(clean);
+
+        var prevSpaceCount = lineString.search(/\S/);
+        var x=lineNumber-1;
+        while (x >= 0) {
+            var rootSpaceCount = lineString.search(/\S/);
+            for (x;x>=0;x--) {
+                rootSpaceCount = lineString.search(/\S/);
+                var testString = editor.session.getLine(x);
+                var spaceCount = testString.search(/\S/);
+                if (testString.trim().indexOf("{") != -1 && spaceCount < rootSpaceCount) {
+                    selectorParts.push(".");
+                }
+                if (testString.trim().indexOf('[') != -1 && spaceCount < rootSpaceCount) {
+                    selectorParts.push("[x]");
+                }
+
+                if (spaceCount < rootSpaceCount){
+                    var clean = testString.slice(testString.indexOf("\"")+1);
+                    clean = clean.slice(0, clean.indexOf("\"")).trim();
+                    if (clean != "")
+                        selectorParts.push(clean);
+                    lineString = editor.session.getLine(x);
+                    break;
+                }
+                if (spaceCount < rootSpaceCount){
+                    lineString = editor.session.getLine(x);
+                }
+            }
+        }
+
+        var selector = "";
+        for(x=selectorParts.length-1;x>=0;x--) {
+            selector += selectorParts[x];
+        }
+
+        return selector;
+    }
+
+    editor.on("changeSelection", function(){
+        var selector = getJSONSelector();
+        //console.log("selector: " + selector);
+        $('#selector').text(selector);
+    });
+
+    editor.on("change", function(e) {
+        var val = editor.session.getValue();
+        valid = false;
+        try {
+            var o = JSON.parse(val);
+            val = JSON.stringify(o, null, 4);
+            if (val) {
+                valid = true;
+            }
+        } catch (err){
+
+        }
+
+        updateValid();
+    });
+
+    $("#pretty").click(function(){
+        console.log("Prettying up");
+        var val = editor.session.getValue();
+        valid = false;
+        try {
+            var o = JSON.parse(val);
+            val = JSON.stringify(o, null, 4);
+            if (val) {
+                valid = true;
+                process = false;
+                editor.session.setValue(val);
+                process = true;
+            }
+        } catch (err){
+
+        }
+
+        updateValid();
+    });
+
+    $("#ugly").click(function(){
+        console.log("Ugly up");
+        var val = editor.session.getValue();
+        valid = false;
+        try {
+            var o = JSON.parse(val);
+            val = JSON.stringify(o);
+            if (val) {
+                valid = true;
+                process = false;
+                editor.session.setValue(val);
+                process = true;
+            }
+        } catch (err){
+
+        }
+
+        updateValid();
+    });
+
+    $("#export").click(function(){
+        if (!valid) {
+            alert('Invalid json');
+            return;
+        }
+
+        var fileName = prompt("Enter filename", "file.csv");
+        if (!fileName) {
+            return;
+        }
+
+        var val = editor.session.getValue();
+        var CSV = json2csv(val);
+        //console.log("CSV: " + CSV);
+        //return;
+
+
+        var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+        var link = document.createElement("a");
+        link.href = uri;
+        link.style = "visibility:hidden";
+        if (fileName.indexOf(".csv") == -1)
+            fileName = fileName + ".csv";
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    $("#copy").click(function(){
+        copyTextToClipboard(editor.session.getValue());
+    })
+});
