@@ -155,6 +155,8 @@ $( document ).ready(function() {
                 process = false;
                 editor.session.setValue(val);
                 process = true;
+                editor.session.setScrollLeft(0)
+                editor.session.setScrollTop(0)
             }
         } catch (err){
 
