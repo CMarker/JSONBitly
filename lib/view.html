@@ -1,20 +1,25 @@
 <style type="text/css" media="screen">
-    #editor { position: relative; margin: 10px; min-height: 93%; display: flex; }
+    #editor { position: relative; margin: 10px; min-height: 90%; max-height: 95%; display: flex; border-style: none; border-color: darkgreen;}
     #footer { position: relative; margin: 10px;}
 </style>
-<body style="background-color: gray; height: 100%;">
-    <div id="nav" style="margin: 5px;">
-        <span class="col-md-2"></span>
-        <span class="col-md-2"></span>
-        <span class="col-md-4">
-            <button id="pretty" class='gen_btn'>Pretty</button>
-            <button id="ugly" class='gen_btn'>Ugly</button>
-            <button id="copy" class='gen_btn'>Copy</button>
-            <button id="export" class='gen_btn'>Export</button>
-            <b><span id="valid"></span></b>
-        </span>
-        <span>Selector: </span><b><span id="selector">selector</span></b>
-    </div>
+<body style="height: 100%;">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">JSONBitly</a>
+            </div>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="#" id="pretty" class='gen_btn'>Pretty</a></li>
+                    <li><a href="#" id="ugly" class='gen_btn'>Ugly</a></li>
+                    <li><a href="#" id="copy" class='gen_btn'>Copy</a></li>
+                    <li><a href="#" id="export" class='gen_btn'>Export</a></li>
+                    <li><b><span id="valid" class="col-md-2 navbar-text">NA</span></b></li>
+                    <li><span class="navbar-text">Selector: </span><b><span id="selector" class="navbar-text">selector</span></b></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div id=""></div>
     <div id="editor"></div>
     <div id="footer"></div>

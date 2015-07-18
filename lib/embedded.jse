@@ -54,7 +54,8 @@ $( document ).ready(function() {
     console.log("It's formatting time.");
     var valid = false;
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
+    //editor.setTheme("ace/theme/monokai");
+    editor.setTheme("ace/theme/eclipse");
     editor.getSession().setMode("ace/mode/json");
     editor.$blockScrolling = Infinity;
     window.editor = editor;
