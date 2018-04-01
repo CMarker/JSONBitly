@@ -17,7 +17,7 @@ var htmlmin = require('gulp-htmlmin');
 
 // toggle build between regular (inline) and newWindow version
 var build = "regular";
-build = "newWindow";
+//build = "newWindow";
 
 var ignoreArray = [];
 var outfile = "";

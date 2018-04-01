@@ -4,6 +4,7 @@
   "description": "",
   "main": "bookmarklet.js",
   "dependencies": {
+    "diff_match_patch": "^0.1.1",
     "gulp": "~3.9.0"
   },
   "devDependencies": {

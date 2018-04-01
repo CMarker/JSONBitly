@@ -1,0 +1,1 @@
+javascript: (function () %7Bvar jsCode %3D document.createElement(%27script%27)%3BjsCode.setAttribute(%27src%27, %27https://rawgit.com/CMarker/JSONBitly/master/dist/jsonbitly.js%27)%3Bdocument.body.appendChild(jsCode)%3B%7D())%3B
