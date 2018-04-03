@@ -60,13 +60,19 @@ $( document ).ready(function() {
     editor.$blockScrolling = Infinity;
     window.editor = editor;
     if (window.json) {
-        var val = json;
-        var o = JSON.parse(val);
-        val = JSON.stringify(o, null, 4);
-        if (val) {
-            editor.session.setValue(val);
-            valid = true;
-            updateValid();
+
+        try {
+            var val = json;
+            var o = JSON.parse(val);
+            val = JSON.stringify(o, null, 4);
+            if (val) {
+                editor.session.setValue(val);
+                valid = true;
+                updateValid();
+            }
+        }
+        catch (e) {
+
         }
     }
 
